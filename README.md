@@ -75,7 +75,7 @@ There were 5 cases that I simulated on test and project video:
 
 Medium and high scale were essential as they provide true positive with very few false positive. Small scale did not detect small vehicles and provided false positive. Hence, it is not required. For certain cases only a single heat map is obtained for the car on medium/high scale with 75% overlap. Hence, whether to use heatThresholding was a major decision point. I preferred to use heatThresholding only when I have data from previous frame. 
 
-Based on the result of the simulation of the above 5 cases, I peferred the case of "Medium and high scale with no heatThresholding and data from previous frame" (line 309-341 in file VehicleDetect.py). I used a simple algorithm to combine the heatmap from current frame and previous frame (line 314-317 in file VehicleDetect.py).
+Based on the result of the simulation of the above 5 cases, I peferred the case of "Medium and high scale with no heatThresholding and data from previous frame" (line 309-341 in file VehicleDetect.py). I used a simple add operation to combine the heatmap from current frame and previous frame (line 314-317 in file VehicleDetect.py).
 
 My search sliding window are (line 322-329 in file VehicleDetect.py):
 
@@ -129,4 +129,3 @@ The pipeline is probably most likely to fail in cases where vehicles don't resem
 Oncomming cars are also an issue. This may be due to the fact that training data contain images of vehicles from behind. As a result it is difficult to detect vehicles from front. This would be problem while driving on narrow lanes (say 2 lanes without the divider). This can be resolved by augmenting the training set by incorporating front images of vehicle. However, oncomming cars are least suitable for considering data from pervious frame. So, in case we use them with data from pevious frame, then some better algorithm (like searching again in those regions) will be required.
 
 Things could be made better by taking the estimated coordinates of the trapezoid region of road in the videos and using scale factors to match them suitably. In this way, we can discard false positives by not considering the points lying outside the trapezoid region of road. However, these will work for specific lane and will not be generalizable. Also, these may give problem when the lane has sharper curve or is more broad. In such cases, the lane detection algorithm of second order polynomial can be used which detect the lane lines and also use those co-ordinates of the lane to look out for vehicles.
-
