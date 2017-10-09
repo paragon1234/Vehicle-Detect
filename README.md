@@ -12,10 +12,10 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 [image1]: ./examples/car.png
 [image2]: ./examples/notCar.png
-[image3]: ./examples/gridSearch0.jpg
-[image4]: ./examples/gridSearch1.jpg
-[image5]: ./examples/gridSearch2.jpg
-[image6]: ./examples/gridSearch3.jpg
+[image3]: ./examples/searchGrid0.jpg
+[image4]: ./examples/searchGrid1.jpg
+[image5]: ./examples/searchGrid2.jpg
+[image6]: ./examples/searchGrid3.jpg
 [image7]: ./examples/test1.jpg
 [image8]: ./examples/heatLabel.jpg
 [image9]: ./examples/final.jpg
@@ -44,7 +44,7 @@ I then explored different color spaces and different `skimage.hog()` parameters 
 Here is an example using the `LUV` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 
-![alt text][image2]
+![alt text][image10]
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
