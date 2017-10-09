@@ -11,12 +11,12 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 [image1]: ./examples/car.png
-[image2]: ./examples/notCar.jpg
+[image2]: ./examples/notCar.png
 [image3]: ./examples/gridSearch0.jpg
 [image4]: ./examples/gridSearch1.jpg
-[image5]: ./examples/gridSearch2.png
-[image6]: ./examples/gridSearch3.png
-[image7]: ./examples/test1.png
+[image5]: ./examples/gridSearch2.jpg
+[image6]: ./examples/gridSearch3.jpg
+[image7]: ./examples/test1.jpg
 [image8]: ./examples/heatLabel.jpg
 [image9]: ./examples/final.jpg
 [image10]: ./examples/HOG.jpg
