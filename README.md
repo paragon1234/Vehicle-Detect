@@ -41,7 +41,7 @@ I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an 
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `LUV` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+Here is an example of HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 
 ![alt text][image10]
@@ -87,7 +87,7 @@ My search sliding window are (line 322-329 in file VehicleDetect.py):
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on four scales using LUV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector (functions extract_features line 70 and function find_cars line 111 in VehicleDetect.py), which provided a nice result.  Here are some example images:
+Ultimately I searched on four scales using LUV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector (functions extract_features line 70 and function find_cars line 111 in VehicleDetect.py), which provided a nice result.  Here is an example images:
 
 ![alt text][image7]
 ---
