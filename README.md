@@ -77,7 +77,7 @@ Medium and high scale were essential as they provide true positive with very few
 
 Based on the result of the simulation of the above 5 cases, I peferred the case of "Medium and high scale with no heatThresholding and data from previous frame" (line 309-341 in file VehicleDetect.py). I used a simple add operation to combine the heatmap from current frame and previous frame (line 314-317 in file VehicleDetect.py).
 
-My search sliding window are (line 322-329 in file VehicleDetect.py):
+My four search sliding window, each with a distinct scale are (line 322-329 in file VehicleDetect.py):
 
 ![alt text][image3]
 
