@@ -73,7 +73,9 @@ There were 5 cases that I simulated on test and project video:
 * Low, medium and high scale with no thresholding and no data from previoud frame
 * Low, medium and high scale with thresholding and data from previous frame
 
-Medium and high scale were essential as they provide true positive with very few false positive. Small scale did not detect small vehicles and provided false positive. Hence, it is not required. For certain cases only a single heat map is obtained for the car on medium/high scale with 75% overlap. Hence, whether to use heatThresholding was a major decision point. I preferred to use heatThresholding only when I have data from previous frame. However, in the end I peferred not to use heatThresholding. I used a simple algorithm to combine the heatmap from current frame and previous frame (line 314-317 in file VehicleDetect.py).
+Medium and high scale were essential as they provide true positive with very few false positive. Small scale did not detect small vehicles and provided false positive. Hence, it is not required. For certain cases only a single heat map is obtained for the car on medium/high scale with 75% overlap. Hence, whether to use heatThresholding was a major decision point. I preferred to use heatThresholding only when I have data from previous frame. 
+
+Based on the result of the simulation of the above 5 cases, I peferred the case of "Medium and high scale with no heatThresholding and data from previous frame" (line 309-341 in file VehicleDetect.py). I used a simple algorithm to combine the heatmap from current frame and previous frame (line 314-317 in file VehicleDetect.py).
 
 My search sliding window are (line 322-329 in file VehicleDetect.py):
 
