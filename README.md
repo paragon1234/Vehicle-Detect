@@ -48,7 +48,7 @@ Here is an example of HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and settled on the final value based upon the performance of the SVM classifier produced using them (training accuracy of the classifier). My final parameters were YUV colorspace, 9 orientations, 8 pixels per cell, 2 cells per block, and ALL channels of the colorspace. Also, 32 bins for histogram and 16 bins for color.
+I tried various combinations of parameters and settled on the final value based upon the performance of the SVM classifier produced using them (training accuracy of the classifier). My final parameters were YUV colorspace, 9 orientations, 16 pixels per cell, 2 cells per block, and ALL channels of the colorspace. Also, 32 bins for histogram and 16 bins for color.
 
 For colorspace all the colorspcase except RGB performed well. Also, no single channel gave training acuracy of greater than 96%. Hence all the channels were considered even thou it increased the computation time. 32 bins Histogram, 16 bin colors and 9 orientation gave the training accuracy of over 99%. 8 pixels per cell and 16 pixels per cell both gave training accuracy of over 99%. 16 was preferred because of low computation time.
 
@@ -87,7 +87,7 @@ My search sliding window are (line 322-329 in file VehicleDetect.py):
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on four scales using LUV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector (functions extract_features line 70 and function find_cars line 111 in VehicleDetect.py), which provided a nice result.  Here is an example images:
+Ultimately I searched on four scales using LUV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector (functions extract_features line 70 and function find_cars line 111 in VehicleDetect.py), which provided a nice result.  Here is an example image:
 
 ![alt text][image7]
 ---
