@@ -129,3 +129,13 @@ The pipeline is probably most likely to fail in cases where vehicles don't resem
 Oncomming cars are also an issue. This may be due to the fact that training data contain images of vehicles from behind. As a result it is difficult to detect vehicles from front. This would be problem while driving on narrow lanes (say 2 lanes without the divider). This can be resolved by augmenting the training set by incorporating front images of vehicle. However, oncomming cars are least suitable for considering data from pervious frame. So, in case we use them with data from pevious frame, then some better algorithm (like searching again in those regions) will be required.
 
 Things could be made better by taking the estimated coordinates of the trapezoid region of road in the videos and using scale factors to match them suitably. In this way, we can discard false positives by not considering the points lying outside the trapezoid region of road. However, these will work for specific lane and will not be generalizable. Also, these may give problem when the lane has sharper curve or is more broad. In such cases, the lane detection algorithm of second order polynomial can be used which detect the lane lines and also use those co-ordinates of the lane to look out for vehicles.
+
+## Changes
+1) LinearSVC C=0.01
+2) It was observed that a certain locations the vehices were not detected. TO fix this I made 2 chanes:
+    a) Changing the smallest scale from 0.5 to 0.75 worked and the vehicles were detected reliablt. 
+    b) I have used data from previous frames, thresholding of 8 with dequeue depth of 10 (). 
+3) The above step results in increased computation time. To speed up computation, I used only Y channel for HOG Computation. This result in slight reduction of training dataset accuracy by 0.5%, but provided substantial reduction in comutation time with no impact on the output.
+    It has been found that the lower scales work best when the overlapping of sliding windows is as high as 87.5% or more. However, for higher scales the overlapping can be lower. Hence, I made overalpping of sliding windows dependent on scale. For small scale the windows are close together and for large scale the windows are far apart()
+    On using lower scale of 0.75, it was observed that there was no impact on output if I drop the scale of 2.5. Hence, scale of 2.5 not used
+4) 25 Images of non-vehicles were used to supress false positives. However, there are still false positives and they annot be removed completely. I think that we need to generate larger dataset of non-vehicles to remove those false positives.
