@@ -136,7 +136,7 @@ Oncomming cars are also an issue. This may be due to the fact that training data
 Things could be made better by taking the estimated coordinates of the trapezoid region of road in the videos and using scale factors to match them suitably. In this way, we can discard false positives by not considering the points lying outside the trapezoid region of road. However, these will work for specific lane and will not be generalizable. Also, these may give problem when the lane has sharper curve or is more broad. In such cases, the lane detection algorithm of second order polynomial can be used which detect the lane lines and also use those co-ordinates of the lane to look out for vehicles.
 
 ## Changes
-My first attempt resulted in the output video "project_video_outputi_6.mp4". In that video, at certain places no vehicle was detected and there were a lot of false positive. To fix those issues, I made following changes:
+My first attempt resulted in the [output video](./project_video_outputi_6.mp4). At certain places, no vehicle was detected and there were a lot of false positive. To fix those issues, I made following changes:
 1) Changed 'C' parameter of LinearSVC to 0.01, to reduce errors.
 2) It was observed that at certain locations the vehicles were not detected. To fix this I made 2 chanes:
     * Changed the smallest scale from 0.5 to 0.75. This worked and the vehicles were detected reliably. 
