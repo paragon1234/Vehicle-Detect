@@ -50,11 +50,11 @@ Here is an example of HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8
 
 I tried various combinations of parameters and settled on the final value based upon the performance of the SVM classifier produced using them (training accuracy of the classifier). My final parameters were YUV colorspace, 9 orientations, 16 pixels per cell, 2 cells per block, and ALL channels of the colorspace. Also, 32 bins for histogram and 16 bins for color.
 
-For colorspace all the colorspcase except RGB performed well. Also, no single channel gave training acuracy of greater than 96%. Hence all the channels were considered even thou it increased the computation time. 32 bins Histogram, 16 bin colors and 9 orientation gave the training accuracy of over 99%. 8 pixels per cell and 16 pixels per cell both gave training accuracy of over 99%. 16 was preferred because of low computation time.
+For colorspace all the colorspcase except RGB performed well. When using all the channels, training accuracy was higher but it required substantial computation time. Using only Y channel of LUV color-scpae, there was a reduction of only 0.5% in the training accuracy but  redreduced computation time by half. Hence, I preferred it as the output quality does'nt change much. 32 bins Histogram, 16 bin colors and 9 orientation gave the training accuracy of over 99%. 8 pixels per cell and 16 pixels per cell both gave training accuracy of over 99%. 16 was preferred because of low computation time.
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM with the default classifier parameters and using HOG features, channel intensity and histogram features. Using this combination I was able to achieve a test accuracy of 99.17%.
+I trained a linear SVM with the parameter C=0.01 and using HOG features, channel intensity and histogram features. Using this combination I was able to achieve a test accuracy of 98.68% (using all channels of YUV colorsace gave training accuracy of 99.17%).
 
 ### Sliding Window Search
 
@@ -73,11 +73,13 @@ There were 5 cases that I simulated on test and project video:
 * Low, medium and high scale with no thresholding and no data from previoud frame
 * Low, medium and high scale with thresholding and data from previous frame
 
-Medium and high scale were essential as they provide true positive with very few false positive. Small scale did not detect small vehicles and provided false positive. Hence, it is not required. For certain cases only a single heat map is obtained for the car on medium/high scale with 75% overlap. Hence, whether to use heatThresholding was a major decision point. I preferred to use heatThresholding only when I have data from previous frame. 
+Initially I used a small scale of 0.5. However,  Small scale did not detect small vehicles and provided false positive. Hence, it is not required. I then changed my lowest scale to 0.75. This worked as the vehicles were detected reliably (using 0.5 scale, there were certain frame when no vehicle was detected). Medium and high scale were essential as they provide true positive with very few false positive. 
+    For certain cases only a single heat map is obtained for the car on medium/high scale with 75% overlap. Hence, whether to use heatThresholding was a major decision point. I preferred to use heatThresholding only when I have data from previous frame or a scale of 0.5/0.75 is used. 
+    It has been found that the lower scales work best when the overlapping of sliding windows is as high as 87.5% or more. However, for higher scales the overlapping can be lower. Hence, I made overalpping of sliding windows dependent on scale. For small scale the windows are close together and for large scale the windows are far apart(line 134-136 in file VehicleDetect.py)
 
-Based on the result of the simulation of the above 5 cases, I peferred the case of "Medium and high scale with no heatThresholding and data from previous frame" (line 309-341 in file VehicleDetect.py). I used a simple add operation to combine the heatmap from current frame and previous frame (line 314-317 in file VehicleDetect.py).
+Based on the result of the simulation of the above 5 cases, I peferred the case of "Medium and high scale with heatThresholding and data from previous frame" (line 309-337 in file VehicleDetect.py). I used a simple add operation to combine the heatmap from current frame and previous frame (line 323-325 in file VehicleDetect.py).
 
-My four search sliding window, each with a distinct scale are (line 322-329 in file VehicleDetect.py):
+My four search sliding window, each with a distinct scale are (line 315-318 in file VehicleDetect.py):
 
 ![alt text][image3]
 
@@ -89,7 +91,7 @@ My four search sliding window, each with a distinct scale are (line 322-329 in f
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on four scales using LUV 3-channel HOG features plus spatially binned color and histograms of color in the feature vector (functions extract_features line 70 and function find_cars line 111 in VehicleDetect.py), which provided a nice result.  Here is an example image:
+Ultimately I searched on four scales using L-channel of LUV for HOG features, plus spatially binned color and histograms of color in the feature vector (functions extract_features line 70 and function find_cars line 111 in VehicleDetect.py), which provided a nice result.  Here is an example image:
 
 ![alt text][image7]
 ---
@@ -131,12 +133,13 @@ Oncomming cars are also an issue. This may be due to the fact that training data
 Things could be made better by taking the estimated coordinates of the trapezoid region of road in the videos and using scale factors to match them suitably. In this way, we can discard false positives by not considering the points lying outside the trapezoid region of road. However, these will work for specific lane and will not be generalizable. Also, these may give problem when the lane has sharper curve or is more broad. In such cases, the lane detection algorithm of second order polynomial can be used which detect the lane lines and also use those co-ordinates of the lane to look out for vehicles.
 
 ## Changes
-1) I have changed 'C' parameter of LinearSVC to 0.01, to reduce errors.
+My first attempt resulted in the output . In that video, at certain places no vehicle was detected and there were a lot of false positive. To fix those issues, I made following changes:
+1) Changed 'C' parameter of LinearSVC to 0.01, to reduce errors.
 2) It was observed that at certain locations the vehicles were not detected. To fix this I made 2 chanes:
-    * Changing the smallest scale from 0.5 to 0.75 worked and the vehicles were detected reliably. 
-    * I have used data from previous frames, thresholding of 8 with dequeue depth of 8 (). 
+    * Changed the smallest scale from 0.5 to 0.75. This worked and the vehicles were detected reliably. 
+    * I have used data from previous frames, thresholding of 8 with dequeue depth of 8. 
 3) The above step results in increased computation time. To speed up computation:
-    * I used only Y channel for HOG Computation. This result in slight reduction of training accuracy by 0.5%, but provided substantial reduction in comutation time with no impact on the output.
-    * It has been found that the lower scales work best when the overlapping of sliding windows is as high as 87.5% or more. However, for higher scales the overlapping can be lower. Hence, I made overalpping of sliding windows dependent on scale. For small scale the windows are close together and for large scale the windows are far apart()
+    * I used only L channel of LUV color-space, for HOG Computation. This result in slight reduction of training accuracy by 0.5%, but provided substantial reduction in computation time with no impact on the output.
+    * It has been found that the lower scales work best when the overlapping of sliding windows is as high as 87.5% or more. However, for higher scales the overlapping can be lower. Hence, I made overalpping of sliding windows dependent on scale. For small scale the windows are close together and for large scale the windows are far apart(line 134-136 in file VehicleDetect.py)
     * On using lower scale of 0.75, it was observed that there was no impact on output if I drop the scale of 2.5. Hence, scale of 2.5 not used
-4) 25 Images of non-vehicles were used to supress false positives. However, there are still false positives and they cannot be removed completely. I think that we need to generate larger dataset of non-vehicles to remove those false positives.
+4) 35 Images of non-vehicles were used to supress false positives. However, there are still false positives and they cannot be removed completely. I think that we need to generate larger dataset of non-vehicles to remove those false positives.
