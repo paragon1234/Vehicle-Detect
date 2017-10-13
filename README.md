@@ -75,9 +75,10 @@ There were 5 cases that I simulated on test and project video:
 
 Initially I used a small scale of 0.5. However,  Small scale did not detect small vehicles and provided false positive. Hence, it is not required. I then changed my lowest scale to 0.75. This worked as the vehicles were detected reliably (using 0.5 scale, there were certain frame when no vehicle was detected). Medium and high scale were essential as they provide true positive with very few false positive. 
 
-    For certain cases only a single heat map is obtained for the car on medium/high scale with 75% overlap. Hence, whether to use heatThresholding was a major decision point. I preferred to use heatThresholding only when I have data from previous frame or a scale of 0.5/0.75 is used. 
+For certain cases only a single heat map is obtained for the car on medium/high scale with 75% overlap. Hence, whether to use heatThresholding was a major decision point. I preferred to use heatThresholding only when I have data from previous frame or a scale of 0.5/0.75 is used. 
     
-    It has been found that the lower scales work best when the overlapping of sliding windows is as high as 87.5% or more. However, for higher scales the overlapping can be lower. Hence, I made overalpping of sliding windows dependent on scale. For small scale the windows are close together and for large scale the windows are far apart(line 134-136 in file VehicleDetect.py)
+It has been found that the lower scales work best when the overlapping of sliding windows is as high as 87.5% or more. However, for higher scales the overlapping can be lower. Hence, I made overalpping of sliding windows dependent on scale. For small scale the windows are close together and for large scale the windows are far apart(line 134-136 in file VehicleDetect.py)
+
 
 Based on the result of the simulation of the above 5 cases, I peferred the case of "Medium and high scale with heatThresholding and data from previous frame" (line 309-337 in file VehicleDetect.py). I used a simple add operation to combine the heatmap from current frame and previous frame (line 323-325 in file VehicleDetect.py).
 
