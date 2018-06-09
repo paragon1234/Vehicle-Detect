@@ -145,3 +145,71 @@ My first attempt resulted in the [output video](./project_video_outputi_6.mp4). 
     * (TODO: THIS IS NOT DONE. It has been found that the lower scales work best when the overlapping of sliding windows is as high as 87.5% or more. However, for higher scales the overlapping can be lower. Hence, I made overalpping of sliding windows dependent on scale. For small scale the windows are close together and for large scale the windows are far apart(line 134-136 in file VehicleDetect.py))
     * On using lower scale of 0.75, it was observed that there was no impact on output if I drop the scale of 2.5. Hence, scale of 2.5 not used
 4) [40 Images](./nonVehImageAdditional) of non-vehicles were used to supress false positives. However, there are still false positives and they cannot be removed completely. I think that we need to generate larger dataset of non-vehicles to remove those false positives. Another reason could be that we have more data for non-Vehicle than for vehicles. Probably, the dataset should be more balanced. However, the false detection are outside the road. This is less worrisome and could be eliminated by using lane detection, where the detection outside the road lanes could be truncated.
+
+## Yolo
+### Description
+In this project we will implement tiny-YOLO v1. Full details of the network, training and implementation are available in the paper - http://arxiv.org/abs/1506.02640
+
+YOLO divides the input image into an SxS grid. If the center of an object falls into a grid cell, that grid cell
+is responsible for detecting that object. Each grid cell predicts B bounding boxes and confidence scores for those boxes.
+
+Confidence is defined as (Probability that the grid cell contains an object) multiplied by (Intersection over union of predicted bounding box over the ground truth). Or
+
+    Confidence = Pr(Object) x IOU_truth_pred.                                                      (1)
+
+Each bounding box consists of 5 predictions:
+1. x
+2. y
+3. w
+4. h
+5. confidence
+
+The (x; y) coordinates represent the center of the box relative to the bounds of the grid cell. The width
+and height are predicted relative to the whole image. Finally the confidence prediction represents the IOU between the
+predicted box and any ground truth box.
+
+Each grid cell also predicts C conditional class probabilities, Pr(ClassijObject). These probabilities are conditioned
+on the grid cell containing an object. We only predict one set of class probabilities per grid cell, regardless of the
+number of boxes B.
+
+At test time we multiply the conditional class probabilities and the individual box confidence predictions,
+
+    Pr(Class|Object) x Pr(Object) x IOU_truth_pred = Pr(Class) x IOU_truth_pred                    (2)
+
+which gives us class-specific confidence scores for each box. These scores encode both the probability of that class appearing in the box and how well the predicted box fits the object.
+
+So at test time, the final output vector for each image is a **S x S x (B x 5 + C)** length vector
+
+### Output
+The output is a feature vector of dimension S x S x (B x 5 + C). How can we be sure that the output contains B bounding boxes per grid with 5 parameters. The output can be anything. However while training the network, you will feed it with 2 things :
+
+    X - image
+    y - pre-processed feature vector of dimensions (S x S x (B x 5 + C))
+
+As you feed your model with more such (X, y) pairs it will begin to learn the correlation between the objects, their bounding boxes and the feature vectors (y). That is the magic of deep neural networks.
+
+### Post-Processing
+ 
+The model was trained on PASCAL VOC dataset. We use S = 7, B = 2. PASCAL VOC has 20 labelled classes so C = 20. So our final prediction, for each input image, is:
+
+    output tensor length = S x S x (B x 5 + C)
+    output tensor length = 7 x 7 x (2x5 + 20)
+    output tensor length = 1470.
+
+The structure of the 1470 length tensor is as follows:
+
+1. First 980 values correspons to probabilities for each of the 20 classes for each grid cell. These probabilities are conditioned on objects being present in each grid cell.
+2. The next 98 values are confidence scores for 2 bounding boxes predicted by each grid cells.
+3. The next 392 values are co-ordinates (x, y, w, h) for 2 bounding boxes per grid cell.
+
+As you can see in the above image, each input image is divided into an S x S grid and for each grid cell, our model predicts B bounding boxes and C confidence scores. There is a fair amount of post-processing involved to arrive at the final bounding boxes based on the model's predictions.
+
+#### Class score threshold
+We reject output from grid cells below a certain threshold (0.2) of class scores (equation 2), computed at test time.
+
+#### Reject overlapping (duplicate) bounding boxes
+If multiple bounding boxes, for each class overlap and have an IOU of more than 0.4 (intersecting area is 40% of union area of boxes), then we keep the box with the highest class score and reject the other box(es).
+
+#### Drawing the bounding boxes
+The predictions (x, y) for each bounding box are relative to the bounds of the grid cell and (w, h) are relative to the whole image. To compute the final bounding box coodinates we have to multiply `w` & `h` with the width & height of the portion of the image used as input for the network.
+
